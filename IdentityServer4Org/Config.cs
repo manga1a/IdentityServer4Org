@@ -72,10 +72,10 @@ namespace IdentityServer4Org
                     },
 
                     // where to redirect to after login
-                    RedirectUris = { "http://localhost:5002/signin-oidc" },
+                    RedirectUris = { "https://localhost:44324/signin-oidc" },
 
                     // where to redirect to after logout
-                    PostLogoutRedirectUris = { "http://localhost:5002/signout-callback-oidc" },
+                    PostLogoutRedirectUris = { "https://localhost:44324/signout-callback-oidc" },
 
                     AllowedScopes = new List<string>
                     {
@@ -98,9 +98,9 @@ namespace IdentityServer4Org
                     RequirePkce = true,
                     RequireClientSecret = false,
 
-                    RedirectUris =           { "http://localhost:5003/callback.html" },
-                    PostLogoutRedirectUris = { "http://localhost:5003/index.html" },
-                    AllowedCorsOrigins =     { "http://localhost:5003" },
+                    RedirectUris =           { "https://localhost:44327/callback.html" },
+                    PostLogoutRedirectUris = { "https://localhost:44327/index.html" },
+                    AllowedCorsOrigins =     { "https://localhost:44327" },
 
                     AllowedScopes =
                     {
