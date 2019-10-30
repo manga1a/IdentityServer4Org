@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace IdentityServer4Org.Migrations
 {
-    public partial class init_aspnetidentity : Migration
+    public partial class init_aspnet_identity : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

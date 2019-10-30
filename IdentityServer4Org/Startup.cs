@@ -1,3 +1,4 @@
+using IdentityServer4Org.App;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -29,7 +30,7 @@ namespace IdentityServer4Org
 
             var migrationAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
-            services.AddDbContext<IdentityDbContext>(opt => opt.UseSqlServer(
+            services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer(
                 connectionString, sql => sql.MigrationsAssembly(migrationAssembly)
                 )
             );
@@ -38,8 +39,8 @@ namespace IdentityServer4Org
             {
                 //options.Tokens.EmailConfirmationTokenProvider = "emailconf";
             })
-                .AddEntityFrameworkStores<IdentityDbContext>();
-                //.AddDefaultTokenProviders()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
                 //.AddTokenProvider<EmailConfirmationTokenProvider<DemoUser>>("emailconf");
 
             //services.AddScoped<IUserClaimsPrincipalFactory<DemoUser>, DemoUserClaimsPrincipalFactory>();
@@ -51,14 +52,22 @@ namespace IdentityServer4Org
 
             //services.ConfigureApplicationCookie(options => options.LoginPath = "/Home/Login");
 
-            //------------------------------------
+       
+            var builder = services.AddIdentityServer()
+                .AddConfigurationStore(options => 
+                {
+                    options.ConfigureDbContext = b => b.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(migrationAssembly));
+                })
+                .AddOperationalStore(options =>
+                {
+                    options.ConfigureDbContext = b => b.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(migrationAssembly));
+                    options.EnableTokenCleanup = true;
+                })
+                .AddAspNetIdentity<IdentityUser>();
+
+
             services.AddControllersWithViews();
 
-            var builder = services.AddIdentityServer()
-                .AddInMemoryIdentityResources(Config.GetIdentityResources())
-                .AddInMemoryApiResources(Config.GetApis())
-                .AddInMemoryClients(Config.GetClients())
-                .AddTestUsers(Config.GetUsers());
 
             if (Environment.IsDevelopment())
             {
