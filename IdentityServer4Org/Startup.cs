@@ -1,9 +1,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Reflection;
 
 namespace IdentityServer4Org
 {
@@ -21,6 +25,33 @@ namespace IdentityServer4Org
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string connectionString = Configuration.GetConnectionString("DefaultConnection");
+
+            var migrationAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
+
+            services.AddDbContext<IdentityDbContext>(opt => opt.UseSqlServer(
+                connectionString, sql => sql.MigrationsAssembly(migrationAssembly)
+                )
+            );
+
+            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            {
+                //options.Tokens.EmailConfirmationTokenProvider = "emailconf";
+            })
+                .AddEntityFrameworkStores<IdentityDbContext>();
+                //.AddDefaultTokenProviders()
+                //.AddTokenProvider<EmailConfirmationTokenProvider<DemoUser>>("emailconf");
+
+            //services.AddScoped<IUserClaimsPrincipalFactory<DemoUser>, DemoUserClaimsPrincipalFactory>();
+
+            //services.Configure<DataProtectionTokenProviderOptions>(options =>
+            //    options.TokenLifespan = TimeSpan.FromHours(1));
+            //services.Configure<EmailConfirmationTokenProviderOptions>(options =>
+            //    options.TokenLifespan = TimeSpan.FromDays(2));
+
+            //services.ConfigureApplicationCookie(options => options.LoginPath = "/Home/Login");
+
+            //------------------------------------
             services.AddControllersWithViews();
 
             var builder = services.AddIdentityServer()
