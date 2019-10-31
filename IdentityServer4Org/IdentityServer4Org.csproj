@@ -1,9 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <UserSecretsId>5296a504-c582-45db-8d1d-c80d60248c1e</UserSecretsId>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="IdentityServer4" Version="3.0.2" />
     <PackageReference Include="IdentityServer4.AspNetIdentity" Version="3.0.2" />
@@ -25,18 +25,14 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.1.0" />
   </ItemGroup>
-
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.3" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Abstractions\Abstractions.csproj" />
     <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
-
 </Project>

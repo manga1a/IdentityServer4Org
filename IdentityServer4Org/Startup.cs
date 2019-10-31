@@ -29,6 +29,8 @@ namespace IdentityServer4Org
         {
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
 
+            services.Configure<SmtpConfig>(Configuration.GetSection("SmtpSettings"));
+
             var migrationAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
             services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer(
