@@ -34,4 +34,9 @@
     <Folder Include="Areas\Admin\Data\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Abstractions\Abstractions.csproj" />
+    <ProjectReference Include="..\Services\Services.csproj" />
+  </ItemGroup>
+
 </Project>

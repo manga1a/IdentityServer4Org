@@ -1,12 +1,13 @@
+using Abstractions.Services;
 using IdentityServer4Org.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Services.Email;
 using System;
 using System.Reflection;
 
@@ -37,6 +38,7 @@ namespace IdentityServer4Org
 
             services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
+                options.SignIn.RequireConfirmedEmail = true;
                 options.Tokens.EmailConfirmationTokenProvider = "emailconf";
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -53,7 +55,6 @@ namespace IdentityServer4Org
 
             //services.ConfigureApplicationCookie(options => options.LoginPath = "/Home/Login");
 
-
             var builder = services.AddIdentityServer()
                 .AddConfigurationStore(options => 
                 {
@@ -69,6 +70,7 @@ namespace IdentityServer4Org
 
             services.AddControllersWithViews();
 
+            services.AddScoped<IEmailSender, SmtpEmailSender>();
 
             if (Environment.IsDevelopment())
             {
