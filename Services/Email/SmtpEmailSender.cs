@@ -27,9 +27,6 @@ namespace Services.Email
 
         public void Send(string address, string subject, string message)
         {
-            //TODO: send an email
-            //System.IO.File.WriteAllText(@"C:\temp\comfirmation_link.txt", message);
-
             using (var client = new SmtpClient())
             {
                 client.Connect(config.Host, config.Port, SecureSocketOptions.Auto);
@@ -42,21 +39,13 @@ namespace Services.Email
         private MimeMessage CreateMessage(string address, string subject, string text)
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Joey", config.Username));
-            message.To.Add(new MailboxAddress("Alice", address));
+            message.From.Add(new MailboxAddress(config.Username));
+            message.To.Add(new MailboxAddress(address));
             message.Subject = subject;
 
             message.Body = new TextPart("plain")
             {
-                Text = @"Hey Alice,
-
-What are you up to this weekend? Monica is throwing one of her parties on
-    Saturday and I was hoping you could make it.
-
-Will you be my +1?
-
--- Joey
-"
+                Text = text
             };
 
             return message;

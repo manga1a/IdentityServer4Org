@@ -54,7 +54,7 @@ namespace IdentityServer4Org.Areas.Admin.Controllers
                         var comfirmationLink = Url.Action("ConfirmEmailAddress", "User",
                             new { area = "Admin", token, email = user.Email, reset = true }, Request.Scheme);
 
-                        emailSender.Send(user.Email, "Register", comfirmationLink);
+                        emailSender.Send(user.Email, "Complete registration", GenerateConfirmationMessage(comfirmationLink));
                     }
                 }
 
@@ -124,6 +124,20 @@ namespace IdentityServer4Org.Areas.Admin.Controllers
                 ModelState.AddModelError("", "Invalid Request");
             }
             return View();
+        }
+
+        private static string GenerateConfirmationMessage(string link)
+        {
+            string plainText = @$"Hi,
+
+Please visit following link to complete registration process.
+
+{link}
+
+-- IdentityServer4Org Admin
+";
+
+            return plainText;
         }
 
         private static string GenerateRandomPassword(PasswordOptions opts)
