@@ -27,13 +27,16 @@ namespace Services.Email
 
         public void Send(string address, string subject, string message)
         {
-            using (var client = new SmtpClient())
-            {
-                client.Connect(config.Host, config.Port, SecureSocketOptions.Auto);
-                client.Authenticate(config.Username, config.Password);
-                client.Send(CreateMessage(address, subject, message));
-                client.Disconnect(true);
-            }
+            //TODO: for testing only
+            System.IO.File.WriteAllText($"C:\\temp\\{subject}.txt", message);
+
+            //using (var client = new SmtpClient())
+            //{
+            //    client.Connect(config.Host, config.Port, SecureSocketOptions.Auto);
+            //    client.Authenticate(config.Username, config.Password);
+            //    client.Send(CreateMessage(address, subject, message));
+            //    client.Disconnect(true);
+            //}
         }
 
         private MimeMessage CreateMessage(string address, string subject, string text)

@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using Abstractions.Services;
 using IdentityModel;
 using IdentityServer4.Events;
 using IdentityServer4.Extensions;
@@ -36,6 +37,8 @@ namespace IdentityServer4.Quickstart.UI
         private readonly IEventService _events;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IUserClaimsPrincipalFactory<IdentityUser> _claimsPrincipalFactory;
+        private readonly IEmailSender _emailSender;
+
 
         //private readonly UserManager<DemoUser> userManager;
         //private readonly IUserClaimsPrincipalFactory<DemoUser> claimsPrincipalFactory;
@@ -48,7 +51,8 @@ namespace IdentityServer4.Quickstart.UI
             IAuthenticationSchemeProvider schemeProvider,
             IEventService events,
             UserManager<IdentityUser> userManager,
-            IUserClaimsPrincipalFactory<IdentityUser> claimsPrincipalFactory)
+            IUserClaimsPrincipalFactory<IdentityUser> claimsPrincipalFactory,
+            IEmailSender emailSender)
         {
             _interaction = interaction;
             _clientStore = clientStore;
@@ -56,6 +60,7 @@ namespace IdentityServer4.Quickstart.UI
             _events = events;
             _userManager = userManager;
             _claimsPrincipalFactory = claimsPrincipalFactory;
+            _emailSender = emailSender;
         }
 
         /// <summary>
@@ -237,6 +242,66 @@ namespace IdentityServer4.Quickstart.UI
             return View();
         }
 
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+
+                if (user != null)
+                {
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var resetUrl = Url.Action("ResetPassword", "Account",
+                        new { token, email = user.Email }, Request.Scheme);
+
+                    _emailSender.Send(user.Email, "Reset Password", GeneratePasswordResetMessage(resetUrl));
+                }
+
+                return View("Success");
+            }
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword(string token, string email)
+        {
+            return View(new ResetPasswordViewModel { Token = token, Email = email });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+
+                if (user != null)
+                {
+                    var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+                    if (!result.Succeeded)
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError("", error.Description);
+                        }
+                        return View();
+                    }
+                    return View("Success");
+                }
+                ModelState.AddModelError("", "Invalid Request");
+            }
+            return View();
+        }
+
 
         /*****************************************/
         /* helper APIs for the AccountController */
@@ -246,7 +311,7 @@ namespace IdentityServer4.Quickstart.UI
             var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
             if (context?.IdP != null && await _schemeProvider.GetSchemeAsync(context.IdP) != null)
             {
-                var local = context.IdP == IdentityServer4.IdentityServerConstants.LocalIdentityProvider;
+                var local = context.IdP == IdentityServerConstants.LocalIdentityProvider;
 
                 // this is meant to short circuit the UI and only trigger the one external IdP
                 var vm = new LoginViewModel
@@ -369,6 +434,23 @@ namespace IdentityServer4.Quickstart.UI
             }
 
             return vm;
+        }
+
+        /*****************************************/
+        /* helper methods */
+        /*****************************************/
+        private static string GeneratePasswordResetMessage(string link)
+        {
+            string plainText = @$"Hi,
+
+Please visit following link to reset your password.
+
+{link}
+
+-- IdentityServer4Org Admin
+";
+
+            return plainText;
         }
     }
 }

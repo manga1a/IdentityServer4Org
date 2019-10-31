@@ -94,37 +94,7 @@ namespace IdentityServer4Org.Areas.Admin.Controllers
             return View("Error");
         }
 
-        [HttpGet]
-        public IActionResult ResetPassword(string token, string email)
-        {
-            return View(new ResetPasswordModel { Token = token, Email = email });
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = await userManager.FindByEmailAsync(model.Email);
-
-                if (user != null)
-                {
-                    var result = await userManager.ResetPasswordAsync(user, model.Token, model.Password);
-                    if (!result.Succeeded)
-                    {
-                        foreach (var error in result.Errors)
-                        {
-                            ModelState.AddModelError("", error.Description);
-                        }
-                        return View();
-                    }
-                    return View("Success");
-                }
-                ModelState.AddModelError("", "Invalid Request");
-            }
-            return View();
-        }
+        
 
         private static string GenerateConfirmationMessage(string link)
         {
