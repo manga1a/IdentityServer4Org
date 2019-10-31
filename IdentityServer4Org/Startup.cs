@@ -1,4 +1,4 @@
-using IdentityServer4Org.App;
+using IdentityServer4Org.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -37,22 +37,23 @@ namespace IdentityServer4Org
 
             services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
-                //options.Tokens.EmailConfirmationTokenProvider = "emailconf";
+                options.Tokens.EmailConfirmationTokenProvider = "emailconf";
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
-                //.AddTokenProvider<EmailConfirmationTokenProvider<DemoUser>>("emailconf");
+                .AddDefaultTokenProviders()
+                .AddTokenProvider<EmailConfirmationTokenProvider<IdentityUser>>("emailconf");
 
             //services.AddScoped<IUserClaimsPrincipalFactory<DemoUser>, DemoUserClaimsPrincipalFactory>();
 
-            //services.Configure<DataProtectionTokenProviderOptions>(options =>
-            //    options.TokenLifespan = TimeSpan.FromHours(1));
-            //services.Configure<EmailConfirmationTokenProviderOptions>(options =>
-            //    options.TokenLifespan = TimeSpan.FromDays(2));
+            services.Configure<DataProtectionTokenProviderOptions>(options =>
+                options.TokenLifespan = TimeSpan.FromHours(3));
+
+            services.Configure<EmailConfirmationTokenProviderOptions>(options =>
+                options.TokenLifespan = TimeSpan.FromDays(2));
 
             //services.ConfigureApplicationCookie(options => options.LoginPath = "/Home/Login");
 
-       
+
             var builder = services.AddIdentityServer()
                 .AddConfigurationStore(options => 
                 {
