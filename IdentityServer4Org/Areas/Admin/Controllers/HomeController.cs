@@ -1,4 +1,5 @@
 ﻿using IdentityServer4Org.Areas.Admin.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Linq;
 namespace IdentityServer4Org.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Administrator")]
     public class HomeController : Controller
     {
         private UserManager<IdentityUser> userManager;

@@ -4,12 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Abstractions.Services;
 using IdentityServer4Org.Areas.Admin.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityServer4Org.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Administrator")]
     public class UserController : Controller
     {
         private readonly UserManager<IdentityUser> userManager;

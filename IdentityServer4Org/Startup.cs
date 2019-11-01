@@ -105,6 +105,7 @@ namespace IdentityServer4Org
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
