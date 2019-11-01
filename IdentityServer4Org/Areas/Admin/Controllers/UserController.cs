@@ -51,8 +51,8 @@ namespace IdentityServer4Org.Areas.Admin.Controllers
                     {
                         var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
 
-                        var comfirmationLink = Url.Action("ConfirmEmailAddress", "User",
-                            new { area = "Admin", token, email = user.Email, reset = true }, Request.Scheme);
+                        var comfirmationLink = Url.Action("ConfirmEmailAddress", "Account",
+                            new { area = "", token, email = user.Email, reset = true }, Request.Scheme);
 
                         emailSender.Send(user.Email, "Complete registration", GenerateConfirmationMessage(comfirmationLink));
                     }
@@ -62,39 +62,6 @@ namespace IdentityServer4Org.Areas.Admin.Controllers
             }
             return View();
         }
-
-        [HttpGet]
-        public async Task<IActionResult> ConfirmEmailAddress(string token, string email, bool reset)
-        {
-            var user = await userManager.FindByEmailAsync(email);
-
-            if (user != null)
-            {
-                var result = await userManager.ConfirmEmailAsync(user, token);
-
-                if (result.Succeeded)
-                {
-                    if (reset)
-                    {
-                        var resetToken = await userManager.GeneratePasswordResetTokenAsync(user);
-
-                        return RedirectToAction("ResetPassword", "User", new { 
-                            area = "Admin",
-                            token = resetToken,
-                            email = user.Email
-                        }, Request.Scheme);
-                    }
-                    else
-                    {
-                        return View("Success");
-                    }
-                }
-            }
-
-            return View("Error");
-        }
-
-        
 
         private static string GenerateConfirmationMessage(string link)
         {

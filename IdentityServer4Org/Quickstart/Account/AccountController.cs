@@ -262,8 +262,8 @@ namespace IdentityServer4.Quickstart.UI
                     var resetUrl = Url.Action("ResetPassword", "Account",
                         new { token, email = user.Email }, Request.Scheme);
 
-                    _emailSender.Send(user.Email, "Reset Password", GeneratePasswordResetMessage(resetUrl));
-                }
+                    _emailSender.Send(user.Email, "Reset password", GeneratePasswordResetMessage(resetUrl));
+                }//TODO: else, inform email is not registered
 
                 return View("Success");
             }
@@ -300,6 +300,34 @@ namespace IdentityServer4.Quickstart.UI
                 ModelState.AddModelError("", "Invalid Request");
             }
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmailAddress(string token, string email, bool reset)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user != null)
+            {
+                var result = await _userManager.ConfirmEmailAsync(user, token);
+
+                if (result.Succeeded)
+                {
+                    if (reset)
+                    {
+                        var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                        return RedirectToAction("ResetPassword", "Account", 
+                            new { token = resetToken, email = user.Email }, Request.Scheme);
+                    }
+                    else
+                    {
+                        return View("Success");
+                    }
+                }
+            }
+
+            return View("Error");
         }
 
 
