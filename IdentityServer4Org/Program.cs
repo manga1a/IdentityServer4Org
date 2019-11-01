@@ -1,6 +1,9 @@
+using IdentityServer4Org.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
 
@@ -21,12 +24,19 @@ namespace IdentityServer4Org
 
             try
             {
-                Log.Information("Starting web host");
-
                 var host = CreateHostBuilder(args).Build();
 
-                //TODO: seed admin
-                
+                using (var scope = host.Services.CreateScope())
+                {
+                    var services = scope.ServiceProvider;
+
+                    //TODO: apply DB migrations
+
+                    // seed initial admin user
+                    SeedData.Initialize(services).Wait();
+                }
+
+                Log.Information("Starting web host");
                 host.Run();
             }
             catch (Exception ex)

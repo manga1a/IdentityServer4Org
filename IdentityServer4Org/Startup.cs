@@ -40,7 +40,7 @@ namespace IdentityServer4Org
 
             services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
-                options.SignIn.RequireConfirmedEmail = true;
+                //options.SignIn.RequireConfirmedEmail = true;
                 options.Tokens.EmailConfirmationTokenProvider = "emailconf";
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
