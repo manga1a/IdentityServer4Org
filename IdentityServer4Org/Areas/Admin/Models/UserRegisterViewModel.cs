@@ -2,9 +2,10 @@
 
 namespace IdentityServer4Org.Areas.Admin.Models
 {
-    public class UserRegisterModel
+    public class UserRegisterViewModel
     {
         [Required]
+        [Display(Name ="Username")]
         public string UserName { get; set; }
 
         [Required]

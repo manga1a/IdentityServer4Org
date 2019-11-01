@@ -23,7 +23,11 @@ namespace IdentityServer4Org
             {
                 Log.Information("Starting web host");
 
-                CreateHostBuilder(args).Build().Run();
+                var host = CreateHostBuilder(args).Build();
+
+                //TODO: seed admin
+                
+                host.Run();
             }
             catch (Exception ex)
             {

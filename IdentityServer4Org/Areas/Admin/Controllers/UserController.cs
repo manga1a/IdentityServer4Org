@@ -29,7 +29,7 @@ namespace IdentityServer4Org.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(UserRegisterModel model)
+        public async Task<IActionResult> Register(UserRegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
