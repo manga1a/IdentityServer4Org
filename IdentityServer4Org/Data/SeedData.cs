@@ -1,10 +1,16 @@
-﻿using IdentityServer4Org.Extensions;
+﻿using IdentityServer4.EntityFramework.DbContexts;
+using IdentityServer4.EntityFramework.Entities;
+using IdentityServer4.EntityFramework.Mappers;
+using IdentityServer4.Models;
+using IdentityServer4Org.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace IdentityServer4Org.Data
@@ -18,6 +24,7 @@ namespace IdentityServer4Org.Data
             ILogger logger = Log.Logger;
             IConfiguration config = serviceProvider.GetRequiredService<IConfiguration>();
 
+            // seed admin user
             var adminPassword = config["SeedAdminPassword"];
             var adminEmail = config["SeedAdminEmail"];
 
@@ -26,6 +33,34 @@ namespace IdentityServer4Org.Data
                 await CreateAdminRole(serviceProvider, logger);
                 await CreateAdminUser(serviceProvider, adminPassword, adminEmail, logger);
             }
+
+            // seed identity resources
+            using(var context = serviceProvider.GetRequiredService<ConfigurationDbContext>())
+            {
+                TrySeedIdentityResources(context);
+            }
+        }
+
+        private static void TrySeedIdentityResources(ConfigurationDbContext context)
+        {
+            if (!context.IdentityResources.Any())
+            {
+                foreach (var resource in GetIdentityResources())
+                {
+                    context.IdentityResources.Add(resource.ToEntity());
+                }
+                context.SaveChanges();
+            }
+        }
+
+        private static IEnumerable<IdentityServer4.Models.IdentityResource> GetIdentityResources()
+        {
+            return new IdentityServer4.Models.IdentityResource[]
+            {
+                new IdentityResources.OpenId(),
+                new IdentityResources.Profile(),
+                new IdentityResources.Email()
+            };
         }
 
         private static async Task CreateAdminRole(IServiceProvider serviceProvider, ILogger logger)
