@@ -46,6 +46,17 @@ namespace IdentityServer4Org.Areas.Admin.Controllers
                 });
             }
 
+            foreach(var client in configurationService.Clients.Where(c => c.Enabled == true))
+            {
+                model.Clients.Add(new ClientViewModel
+                {
+                    Id = client.Id,
+                    ClientId = client.ClientId,
+                    Name = client.ClientName,
+                    Description = client.Description
+                });
+            }
+
             return View(model);
         }
     }

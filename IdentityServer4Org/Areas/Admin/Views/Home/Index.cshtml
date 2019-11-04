@@ -59,3 +59,32 @@
     </div>
 </div>
 
+<hr />
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Clients</h4>
+        <h6 class="card-subtitle mb-2 text-muted">Client list</h6>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var client in Model.Clients)
+                {
+                    <tr>
+                        <td>@client.ClientId</td>
+                        <td>@client.Name</td>
+                        <td>@client.Description</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <a class="card-link" asp-area="Admin" asp-controller="Client" asp-action="Add">Add new JS client</a>
+    </div>
+</div>
+
