@@ -3,6 +3,8 @@ using IdentityServer4.EntityFramework.Interfaces;
 using IdentityServer4Org.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace IdentityServer4Org.Areas.Admin.Controllers
@@ -29,11 +31,15 @@ namespace IdentityServer4Org.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                var scopes = model.Scopes.Split(',');
+                var apiScopes = scopes.Select(s => new ApiScope { Name = s }).ToList();
+
                 await configurationService.ApiResources.AddAsync(new ApiResource
                 {
                     Name = model.Name,
                     DisplayName = model.DisplayName,
-                    Description = model.Description
+                    Description = model.Description,
+                    Scopes = apiScopes
                 });
 
                 await configurationService.SaveChangesAsync();

@@ -11,5 +11,8 @@ namespace IdentityServer4Org.Areas.Admin.Models
         public string DisplayName { get; set; }
 
         public string Description { get; set; }
+
+        [Required]
+        public string Scopes { get; set; }
     }
 }
